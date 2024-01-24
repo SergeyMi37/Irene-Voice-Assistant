@@ -44,13 +44,15 @@ if __name__ == "__main__":
                 if _num=='':
                     break
                 else:
-                    #print(_num)
-                    _val=_promt.get(int(_num))
-                    #print(_val)
-                    _va=_val.split('|')[0]
-                    if _va:
-                        cmd=_va
-                        print(_va)
-                        cmd_core.execute_next(cmd,cmd_core.context)
+                    try:
+                        _val=_promt.get(int(_num))
+                        #print(_val)
+                        _va=_val.split('|')[0]
+                        if _va:
+                            cmd=_va
+                            print(_va)
+                            cmd_core.execute_next(cmd,cmd_core.context)
+                    except Exception as err:
+                        print("---err: ",err)
         else:
             cmd_core.execute_next(cmd,cmd_core.context)

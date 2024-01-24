@@ -8,6 +8,7 @@
 /temp/
 /plugins/plugin_tts_silero.py
 /venv/
+/env2/
 /.venv/
 *.pyc
 /tts_cache/

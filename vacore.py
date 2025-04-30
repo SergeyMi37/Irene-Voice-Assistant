@@ -12,7 +12,7 @@ from jaa import JaaCore
 
 from collections.abc import Callable
 
-version = "10.6.0"
+version = "10.9.4"
 
 # main VACore class
 
@@ -49,6 +49,7 @@ class VACore(JaaCore):
         self.version = version
 
         self.voiceAssNames = []
+        self.voiceAssNameRunCmd = {}
 
         self.useTTSCache = False
         self.tts_cache_dir = "tts_cache"
@@ -77,6 +78,8 @@ class VACore(JaaCore):
         self.cur_callname:str = ""
 
         self.input_cmd_full:str = ""
+
+        self.fastApiApp = None
 
 
     def init_with_plugins(self):
@@ -429,6 +432,13 @@ class VACore(JaaCore):
         return None
 
     # ----------- timers -----------
+    def util_time_to_readable(self,curtime):
+        import datetime
+        human_readable_date_local = datetime.datetime.fromtimestamp(curtime)
+
+        # Print it in a human-readable format using local time zone
+        return human_readable_date_local.strftime('%Y-%m-%d %H:%M:%S')
+
     def set_timer(self, duration, timerFuncEnd, timerFuncUpd = None):
         # print "Start set_timer!"
         curtime = time.time()
@@ -437,7 +447,7 @@ class VACore(JaaCore):
                 # print "Found timer!"
                 self.timers[i] = curtime+duration  #duration
                 self.timersFuncEnd[i] = timerFuncEnd
-                print("New Timer ID =", str(i), ' curtime=', curtime, 'duration=', duration, 'endtime=', self.timers[i])
+                print("New Timer ID =", str(i), ' curtime=', self.util_time_to_readable(curtime), 'duration=', duration, 'endtime=', self.util_time_to_readable(self.timers[i]))
                 return i
         return -1  # no more timer valid
 
@@ -459,7 +469,7 @@ class VACore(JaaCore):
         for i in range(len(self.timers)):
             if(self.timers[i] > 0):
                 if curtime >= self.timers[i]:
-                    print("End Timer ID =", str(i), ' curtime=', curtime, 'endtime=', self.timers[i])
+                    print("End Timer ID =", str(i), ' curtime=', self.util_time_to_readable(curtime), 'endtime=', self.util_time_to_readable(self.timers[i]))
                     self.clear_timer(i,True)
 
     # --------- calling functions -----------
@@ -509,6 +519,9 @@ class VACore(JaaCore):
 
 
                         command_options = " ".join([str(input_part) for input_part in voice_input[(ind+1):len(voice_input)]])
+                        if callname in self.voiceAssNameRunCmd:
+                            command_options = self.voiceAssNameRunCmd.get(callname)+" "+command_options
+                            print("Modified input, added ", self.voiceAssNameRunCmd.get(callname))
 
                         # running some cmd before run cmd
                         if func_before_run_cmd != None:

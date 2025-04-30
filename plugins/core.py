@@ -7,7 +7,7 @@ from vacore import VACore
 def start(core:VACore):
     manifest = {
         "name": "Core plugin",
-        "version": "4.0",
+        "version": "4.2",
         "description": "Плагин с основными настройками Ирины.\nПосмотрите другие плагины, чтобы понять, какие команды можно использовать.",
 
         "options_label": {
@@ -18,7 +18,7 @@ def start(core:VACore):
             "isOnline": "Будут ли выполняться команды плагинов, требующие онлайн",
             # "ttsIndex": 0,
             "useTTSCache": "Кешировать озвучку текста (требует больше места на диске, может сбоить при переключении голосов)",
-            "ttsEngineId": "ID основного движка озвучки. Если что-то не работает - попробуйте сменить на pyttsx, vosk или silero_v3 (последний требует полной установки из install - т.е. c torch)",
+            "ttsEngineId": "ID основного движка озвучки. Если что-то не работает - попробуйте сменить на pyttsx, elevenlabs, vosk, vsegpt (если используете) или silero_v3 (последний требует полной установки из install - т.е. c torch)",
             "ttsEngineId2": "ID дополнительного движка озвучки. Всегда озвучивает результат на той машине, где запущена Ирина (без веб-интерфейса)",  # двиг для прямой озвучки на сервере. Если пуст - используется ttsEngineId
             "playWavEngineId": "ID движка воспроизведения аудио. Если есть проблемы - попробуйте сменить на audioplayer или sounddevice",
             "linguaFrancaLang": "Язык для библиотеки lingua-franca конвертирования чисел",  # язык для библиотеки lingua-franca конвертирования чисел
@@ -34,6 +34,8 @@ def start(core:VACore):
 
             "tempDir": "адрес директории для временных файлов",
             "fuzzyThreshold": "(ПРО) Порог уверенности при использовании нечеткого распознавания команд",
+
+            "voiceAssNameRunCmd": "Словарь сопоставлений. При нахождении имени помощника, добавляет префикс к распознанной фразе",
         },
 
         "default_options": {
@@ -60,6 +62,10 @@ def start(core:VACore):
 
             "tempDir": "temp",
             "fuzzyThreshold": 0.5,
+
+            "voiceAssNameRunCmd": {
+                "альбина": "чатгпт"
+            }
         },
 
     }
@@ -76,6 +82,8 @@ def start_with_options(core:VACore, manifest:dict):
     core.isOnline = options["isOnline"]
 
     core.voiceAssNames = options["voiceAssNames"].split("|")
+    core.voiceAssNameRunCmd = options["voiceAssNameRunCmd"]
+    print(core.voiceAssNameRunCmd)
     core.ttsEngineId = options["ttsEngineId"]
     core.ttsEngineId2 = options["ttsEngineId2"]
     core.playWavEngineId = options["playWavEngineId"]
